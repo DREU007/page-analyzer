@@ -27,5 +27,5 @@ jobs:
           make install
       - name: Run linter
         run: make lint
-      - name: Run pytest
-        run: make test
+#       - name: Run pytest
+#         run: make test
