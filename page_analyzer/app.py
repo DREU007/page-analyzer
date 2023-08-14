@@ -1,10 +1,9 @@
 from flask import (
-        Flask, render_template, redirect, url_for, make_response
+        Flask, render_template, redirect, url_for, make_response, request
 )
 
 
 app = Flask(__name__)
-
 
 values={
     'eng': {
@@ -28,33 +27,34 @@ values={
 }
 
 
+def get_kv_dict(lang):
+    return values[lang] | values['languages']
+
+@app.context_processor
+def inject_kv_dict():
+    cookies_lang = request.cookies.get('language', 'eng')
+    return dict(kv_dict=get_kv_dict(cookies_lang))
+
 @app.route('/')
 def get_index():
-    language = request.cookies.get('lang', 'eng')
-    resposnse = make_response(
-        render_template(
-            'index.html',
-            kv_dict=values[language],
-            lang=values['languages']
-        )
-    )
-    return resposnse
+    return render_template('index.html')
 
 @app.route('/ru/')
 def get_ru_index():
-    return render_template(
-        'index.html',
-        kv_dict=values['rus'],
-        lang=values['languages']
-    )
+    response = make_response(redirect(
+        url_for('get_index'), code=302
+    ))
+    response.set_cookie('language', 'rus')
+    return response
 
 @app.route('/en/')
 def get_eng_index():
-    return redirect(
-        url_for('get_index'),
-        code=302
-    )
-
+    response = make_response(redirect(
+        url_for('get_index'), code=302
+    ))
+    response.set_cookie('language', 'eng')
+    return response
+    
 @app.errorhandler(404)
 def not_found(e):
     return render_template(
