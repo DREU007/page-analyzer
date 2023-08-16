@@ -1,39 +1,18 @@
 from flask import (
         Flask, render_template, redirect, url_for, make_response, request
 )
+from page_analyzer.locales_loader import Locales
 
 
 app = Flask(__name__)
 
-values={
-    'eng': {
-        'title': 'Web Page Analyzer',
-        'urls': 'URLs',
-        'lang': 'Languages',
-        'description': ' Validate web page SEO-adaptiveness',
-        'button': 'VALIDATE'
-    },
-    'rus': {
-        'title': 'Анализатор страниц',
-        'urls': 'Сайты',
-        'lang': 'Язык',
-        'description': 'Бесплатно проверяйте сайты на SEO-пригодность',
-        'button': 'ПРОВЕРИТЬ'
-        },
-    'languages': {
-        'rus': 'Русский',
-        'eng': 'English'
-    }
-}
+locales = Locales()
 
-
-def get_kv_dict(lang):
-    return values[lang] | values['languages']
 
 @app.context_processor
 def inject_kv_dict():
     cookies_lang = request.cookies.get('language', 'eng')
-    return dict(kv_dict=get_kv_dict(cookies_lang))
+    return dict(kv_dict=locales.get_kv_dict(cookies_lang))
 
 @app.route('/')
 def get_index():
@@ -60,3 +39,11 @@ def not_found(e):
     return render_template(
         '404.html'
     )
+
+@app.route('/urls', methods=['GET', 'POST'])
+def urls():
+    return render_template('urls.html')
+
+@app.route('/urls/<int:url_id>')
+def get_url_id(url_id):
+    return render_template('url_id.html', url_data=url_id)
