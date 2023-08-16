@@ -1,0 +1,20 @@
+{
+    "eng": {
+        "title": "Web Page Analyzer",
+        "urls": "URLs",
+        "lang": "Languages",
+        "description": " Validate web page SEO-adaptiveness",
+        "button": "VALIDATE"
+    },
+    "rus": {
+        "title": "\u0410\u043d\u0430\u043b\u0438\u0437\u0430\u0442\u043e\u0440 \u0441\u0442\u0440\u0430\u043d\u0438\u0446",
+        "urls": "\u0421\u0430\u0439\u0442\u044b",
+        "lang": "\u042f\u0437\u044b\u043a",
+        "description": "\u0411\u0435\u0441\u043f\u043b\u0430\u0442\u043d\u043e \u043f\u0440\u043e\u0432\u0435\u0440\u044f\u0439\u0442\u0435 \u0441\u0430\u0439\u0442\u044b \u043d\u0430 SEO-\u043f\u0440\u0438\u0433\u043e\u0434\u043d\u043e\u0441\u0442\u044c",
+        "button": "\u041f\u0420\u041e\u0412\u0415\u0420\u0418\u0422\u042c"
+    },
+    "languages": {
+        "rus": "\u0420\u0443\u0441\u0441\u043a\u0438\u0439",
+        "eng": "English"
+    }
+}
