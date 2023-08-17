@@ -2,7 +2,7 @@ from flask import (
         Flask, render_template, redirect, url_for, make_response, request
 )
 from page_analyzer.locales_loader import Locales
-
+from page_analyzer.url_tools import normalize, validate
 
 app = Flask(__name__)
 
@@ -36,12 +36,16 @@ def get_eng_index():
     
 @app.errorhandler(404)
 def not_found(e):
-    return render_template(
-        '404.html'
-    )
+    return render_template('404.html'), 404
 
 @app.route('/urls', methods=['GET', 'POST'])
 def urls():
+    if request.method == 'POST':
+        url = request.args.get(url, False)
+        if url:
+            if validate(normalize(url)):
+                url_id = 1  # TODO: Update get_sql_id()
+                return make_response(redirect(url_for('get_url_id', url_id=url_id)), code=302)
     return render_template('urls.html')
 
 @app.route('/urls/<int:url_id>')

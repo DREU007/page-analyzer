@@ -1,23 +1,3 @@
-values={
-    'eng': {
-        'title': 'Web Page Analyzer',
-        'urls': 'URLs',
-        'lang': 'Languages',
-        'description': ' Validate web page SEO-adaptiveness',
-        'button': 'VALIDATE'
-    },
-    'rus': {
-        'title': 'Анализатор страниц',
-        'urls': 'Сайты',
-        'lang': 'Язык',
-        'description': 'Бесплатно проверяйте сайты на SEO-пригодность',
-        'button': 'ПРОВЕРИТЬ'
-        },
-    'languages': {
-        'rus': 'Русский',
-        'eng': 'English'
-    }
-}
 import pathlib 
 import json
 
