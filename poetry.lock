@@ -41,14 +41,14 @@ files = [
 
 [[package]]
 name = "exceptiongroup"
-version = "1.1.2"
+version = "1.1.3"
 description = "Backport of PEP 654 (exception groups)"
 category = "main"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "exceptiongroup-1.1.2-py3-none-any.whl", hash = "sha256:e346e69d186172ca7cf029c8c1d16235aa0e04035e5750b4b95039e65204328f"},
-    {file = "exceptiongroup-1.1.2.tar.gz", hash = "sha256:12c3e887d6485d16943a309616de20ae5582633e0a2eda17f4e10fd61c1e8af5"},
+    {file = "exceptiongroup-1.1.3-py3-none-any.whl", hash = "sha256:343280667a4585d195ca1cf9cef84a4e178c4b6cf2274caef9859782b567d5e3"},
+    {file = "exceptiongroup-1.1.3.tar.gz", hash = "sha256:097acd85d473d75af5bb98e41b61ff7fe35efe6675e4f9370ec6ec5126d160e9"},
 ]
 
 [package.extras]
@@ -402,15 +402,37 @@ files = [
 ]
 
 [[package]]
+name = "validators"
+version = "0.21.2"
+description = "Python Data Validation for Humans™"
+category = "main"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "validators-0.21.2-py3-none-any.whl", hash = "sha256:6ad95131005a9d4c734a69dd4ef08cf66961e61222e60da25a9b5137cecd6fd4"},
+    {file = "validators-0.21.2.tar.gz", hash = "sha256:002ba1552076535176824e43149c18c06f6b611bc8b597ddbcf8770bcf5f9f5c"},
+]
+
+[package.extras]
+docs-offline = ["myst-parser (>=2.0.0)", "pypandoc-binary (>=1.11)", "sphinx (>=7.1.1)"]
+docs-online = ["mkdocs (>=1.5.2)", "mkdocs-material (>=9.1.21)", "mkdocstrings[python] (>=0.22.0)", "pyaml (>=23.7.0)"]
+hooks = ["pre-commit (>=3.3.3)"]
+runner = ["tox (>=4.6.4)"]
+sast = ["bandit[toml] (>=1.7.5)"]
+testing = ["pytest (>=7.4.0)"]
+tooling = ["black (>=23.7.0)", "pyright (>=1.1.320)", "ruff (>=0.0.280)"]
+tooling-extras = ["pyaml (>=23.7.0)", "pypandoc-binary (>=1.11)", "pytest (>=7.4.0)"]
+
+[[package]]
 name = "werkzeug"
-version = "2.3.6"
+version = "2.3.7"
 description = "The comprehensive WSGI web application library."
 category = "main"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "Werkzeug-2.3.6-py3-none-any.whl", hash = "sha256:935539fa1413afbb9195b24880778422ed620c0fc09670945185cce4d91a8890"},
-    {file = "Werkzeug-2.3.6.tar.gz", hash = "sha256:98c774df2f91b05550078891dee5f0eb0cb797a522c757a2452b9cee5b202330"},
+    {file = "werkzeug-2.3.7-py3-none-any.whl", hash = "sha256:effc12dba7f3bd72e605ce49807bbe692bd729c3bb122a3b91747a6ae77df528"},
+    {file = "werkzeug-2.3.7.tar.gz", hash = "sha256:2b8c0e447b4b9dbcc85dd97b6eeb4dcbaf6c8b6c3be0bd654e25553e0a2157d8"},
 ]
 
 [package.dependencies]
@@ -422,4 +444,4 @@ watchdog = ["watchdog (>=2.3)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "7bdb9e65867edcda5b21e79593323d1070c5f49809ad13c33d90434027078844"
+content-hash = "66809f2aeb489535e700458305d36f6a46358d7e1418e92e66d2efab70e09fb8"
