@@ -44,14 +44,15 @@ def not_found(e):
 @app.route('/urls', methods=['GET', 'POST'])
 def urls():
     if request.method == 'POST':
-        print(request.args)
-        url = request.args.get('url', False)
+        print(request.form)
+        url = request.form.get('url', False)
         print(url)
         if url:
             if validate(normalize(url)):
                 url_id = 1  # TODO: Update get_sql_id()
                 flash('Success', 'success')
-                return make_response(redirect(url_for('get_url_id', url_id=url_id)), code=302)
+                return make_response(redirect(
+                    url_for('get_url_id', url_id=url_id), code=302))
     response = make_response(redirect(url_for('get_index'), code=302))
     flash('Error', 'danger') 
     return response
