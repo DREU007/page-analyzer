@@ -1,11 +1,13 @@
+import os
 from flask import (
-        Flask, render_template, redirect, url_for, make_response, request
+        Flask, render_template, redirect, url_for, make_response, request, flash,
+        get_flashed_messages
 )
 from page_analyzer.locales_loader import Locales
 from page_analyzer.url_tools import normalize, validate
 
 app = Flask(__name__)
-
+app.secret_key = os.environ.get('SECRET_KEY')
 locales = Locales()
 
 
@@ -16,7 +18,8 @@ def inject_kv_dict():
 
 @app.route('/')
 def get_index():
-    return render_template('index.html')
+    messages = get_flashed_messages(with_categories=True)
+    return render_template('index.html', messages=messages)
 
 @app.route('/ru/')
 def get_ru_index():
@@ -41,13 +44,19 @@ def not_found(e):
 @app.route('/urls', methods=['GET', 'POST'])
 def urls():
     if request.method == 'POST':
-        url = request.args.get(url, False)
+        print(request.args)
+        url = request.args.get('url', False)
+        print(url)
         if url:
             if validate(normalize(url)):
                 url_id = 1  # TODO: Update get_sql_id()
+                flash('Success', 'success')
                 return make_response(redirect(url_for('get_url_id', url_id=url_id)), code=302)
-    return render_template('urls.html')
+    response = make_response(redirect(url_for('get_index'), code=302))
+    flash('Error', 'danger') 
+    return response
 
 @app.route('/urls/<int:url_id>')
 def get_url_id(url_id):
-    return render_template('url_id.html', url_data=url_id)
+    messages = get_flashed_messages(with_categories=True)
+    return render_template('url_id.html', url_data=url_id, messages=messages)

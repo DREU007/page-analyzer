@@ -1,5 +1,14 @@
 {% extends "base.html" %}
 {% block main %}
+  {% if messages %}
+      <div>
+        <ul class="alert">
+          {% for category, message in messages %}
+            <li class="list-unstyled alert alert-{{ category }}">{{ message }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+  {% endif %}
   <div class="container-lg my-5 py-5">
     <div class="row">
       <div class="col-12 col-md-10 col-lg-6 mx-auto rounded border bg-light-subtle p-5">
@@ -10,7 +19,7 @@
           <label for="url" class="visually-hidden">
             url
           </label>
-          <input class="form-control" id="url" type="url" placeholder="https://example.com">
+          <input class="form-control" id="url" name="url" value="" type="text" placeholder="https://example.com">
           <input class="btn btn-outline-info btn-dark ms-3" type="submit" value="{{ kv_dict.button }}">
         </form>
       </div>
