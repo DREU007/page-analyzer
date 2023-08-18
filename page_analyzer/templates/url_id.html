@@ -1,5 +1,37 @@
 {% extends "index.html" %}
 {% block main %}
   {% block flash %}{{ super() }}{% endblock %}
-  <div class="text-center fw-bold">{{ url_data }}</div>
+  <div class="container py-5">
+    {% set table = kv_dict.table %}
+
+    <h1>{{ kv_dict.url }}</h1>
+    <table class="table table-dark table-striped table-bordered" data-test="url">
+      <tbody>
+        <tr>
+          <th>{{ table.id }}</th>
+          <td></td>
+        </tr>
+        <tr>
+          <th>{{ table.name }}</th>
+          <td></td>
+        </tr>
+        <tr>
+          <th>{{ table.created_at }}</th>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h1 class="pt-5">{{ kv_dict.checks }}</h1>
+    <table class="table table-dark table-striped table-bordered" data-test="checks">
+      <thead>
+        <th>{{ table.id }}</th>
+        <th>{{ table.code }}</th>
+        <th>{{ table.h1 }}</th>
+        <th>{{ table.title }}</th>
+        <th>{{ table.description }}</th>
+        <th>{{ table.created_at }}</th>
+      </thead>
+    </table>
+  </div>
 {% endblock %}

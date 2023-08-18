@@ -1,6 +1,23 @@
 {% extends "base.html" %}
 {% block main %}
-  <div class="text-center fw-bold fs-6">
-    List of URLs
+  <div class="container py-5">
+    {% set table = kv_dict.table %}
+
+    <h1>{{ kv_dict.urls }}</h1>
+    <table class="table table-dark table-striped table-bordered" data-test="urls">
+      <thead>
+        <th>{{ table.id }}</th>
+        <th>{{ table.name }}</th>
+        <th>{{ table.updated_at }}</th>
+        <th>{{ table.code }}</th>
+      </thead>
+      <tbody>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tbody>
+    </table>
+  
   </div>
 {% endblock %}

@@ -1,4 +1,6 @@
 import os
+import datetime
+import psycopg2
 from flask import (
         Flask, render_template, redirect, url_for, make_response, request, flash,
         get_flashed_messages
@@ -10,6 +12,8 @@ app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY')
 
 DATABASE_URL = os.getenv('DATABASE_URL')
+conn = psycopg2.connect(DATABASE_URL)
+curr = conn.cursor()
 locales = Locales()
 
 
@@ -48,16 +52,28 @@ def urls():
     if request.method == 'POST':
         url = request.form.get('url', False)
         if url:
-            if validate(normalize(url)):
-                # if url in db:
-                url_id = 1  # TODO: Update get_sql_id()
-                flash('added', 'success')
+            normalized_url = normalize(url)
+            if validate(normalized_url):
+                curr.execute('SELECT name FROM urls;')
+                existing_urls = [row[0] for row in curr.fetchall()]
+                if normalized_url in existing_urls:
+                    flash('exist', 'info')
+                else:
+                    curr.execute('''
+                        INSERT INTO urls (name, created_at)
+                        VALUES (%s, %s);
+                        ''',
+                        (normalized_url, datetime.datetime.now().isoformat())
+                    )
+                    conn.commit()
+                    flash('added', 'success')
                 return make_response(redirect(
-                    url_for('get_url_id', url_id=url_id), code=302))
+                    url_for('get_url_id', url_id=1), code=302
+                ))
             flash('invalid', 'danger')
         flash('missing', 'danger') 
-    response = make_response(redirect(url_for('get_index'), code=302))
-    return response
+        return make_response(redirect(url_for('get_index'), code=302))
+    return render_template('urls.html') 
 
 @app.route('/urls/<int:url_id>')
 def get_url_id(url_id):
