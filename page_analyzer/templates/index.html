@@ -1,14 +1,16 @@
 {% extends "base.html" %}
 {% block main %}
-  {% if messages %}
-      <div>
-        <ul class="alert">
-          {% for category, message in messages %}
-            <li class="list-unstyled alert alert-{{ category }}">{{ message }}</li>
-          {% endfor %}
-        </ul>
-      </div>
-  {% endif %}
+  {% block flash %}
+    {% if messages %}
+        <div>
+          <ul class="alert">
+            {% for category, message in messages %}
+              <li class="list-unstyled alert alert-{{ category }}">{{ kv_dict.flash[message] }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+    {% endif %}
+  {% endblock %}
   <div class="container-lg my-5 py-5">
     <div class="row">
       <div class="col-12 col-md-10 col-lg-6 mx-auto rounded border bg-light-subtle p-5">

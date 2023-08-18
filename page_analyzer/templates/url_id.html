@@ -1,13 +1,5 @@
-{% extends "base.html" %}
+{% extends "index.html" %}
 {% block main %}
-  {% if messages %}
-  <div>
-    <ul class="alert">
-      {% for category, message in messages %}
-        <li class="list-unstyled alert alert-{{ category }}">{{ message }}</li>
-      {% endfor %}
-    </ul>
-  </div>
-  {% endif %}
+  {% block flash %}{{ super() }}{% endblock %}
   <div class="text-center fw-bold">{{ url_data }}</div>
 {% endblock %}
