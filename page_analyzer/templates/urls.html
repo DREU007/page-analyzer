@@ -11,13 +11,14 @@
         <th>{{ table.updated_at }}</th>
         <th>{{ table.code }}</th>
       </thead>
-      <tbody>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-      </tbody>
-    </table>
+      {% for row in table_data %}
+	      <tbody>
+	        {% for item in row %}
+	          <td>{{ item }}</td>
+	        {% endfor %}
+        </tbody>
+      {% endfor %}
+     </table>
   
   </div>
 {% endblock %}

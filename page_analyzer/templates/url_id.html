@@ -5,19 +5,20 @@
     {% set table = kv_dict.table %}
 
     <h1>{{ kv_dict.url }}</h1>
+    {% set id, name, created_at = url_data %}
     <table class="table table-dark table-striped table-bordered" data-test="url">
       <tbody>
         <tr>
           <th>{{ table.id }}</th>
-          <td></td>
+          <td>{{ id }}</td>
         </tr>
         <tr>
           <th>{{ table.name }}</th>
-          <td></td>
+          <td>{{ name }}</td>
         </tr>
         <tr>
           <th>{{ table.created_at }}</th>
-          <td></td>
+          <td>{{ created_at }}</td>
         </tr>
       </tbody>
     </table>

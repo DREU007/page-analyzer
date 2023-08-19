@@ -47,35 +47,50 @@ def get_eng_index():
 def not_found(e):
     return render_template('404.html'), 404
 
-@app.route('/urls', methods=['GET', 'POST'])
-def urls():
-    if request.method == 'POST':
-        url = request.form.get('url', False)
-        if url:
-            normalized_url = normalize(url)
-            if validate(normalized_url):
-                curr.execute('SELECT name FROM urls;')
-                existing_urls = [row[0] for row in curr.fetchall()]
-                if normalized_url in existing_urls:
-                    flash('exist', 'info')
-                else:
-                    curr.execute('''
-                        INSERT INTO urls (name, created_at)
-                        VALUES (%s, %s);
-                        ''',
-                        (normalized_url, datetime.datetime.now().isoformat())
-                    )
-                    conn.commit()
-                    flash('added', 'success')
-                return make_response(redirect(
-                    url_for('get_url_id', url_id=1), code=302
-                ))
-            flash('invalid', 'danger')
-        flash('missing', 'danger') 
-        return make_response(redirect(url_for('get_index'), code=302))
-    return render_template('urls.html') 
+@app.route('/urls', methods=['GET'])
+def get_urls():
+    curr.execute("""
+    SELECT * FROM urls ORDER BY id DESC;
+    """)
+    sql_data = [row for row in curr.fetchall()]
+    return render_template('urls.html', table_data=sql_data) 
+
+@app.route('/urls', methods=['POST'])
+def post_urls():
+    url = request.form.get('url', False)
+    if url:
+        normalized_url = normalize(url)
+        if validate(normalized_url):
+            curr.execute('SELECT name FROM urls;')
+            existing_urls = [row[0] for row in curr.fetchall()]
+            if normalized_url in existing_urls:
+                flash('exist', 'info')
+            else:
+                curr.execute('''
+                    INSERT INTO urls (name, created_at)
+                    VALUES (%s, %s);
+                    ''',
+                    (normalized_url, datetime.datetime.now().isoformat())
+                )
+                conn.commit()
+                flash('added', 'success')
+
+            curr.execute(
+                'SELECT id FROM urls WHERE name = %s', (normalized_url,)
+            )
+            url_id = curr.fetchone()[0]
+
+            return make_response(redirect(
+                url_for('get_url_id', url_id=url_id), code=302
+            ))
+        flash('invalid', 'danger')
+    flash('missing', 'danger') 
+    return make_response(redirect(url_for('get_index'), code=302))
+    
 
 @app.route('/urls/<int:url_id>')
 def get_url_id(url_id):
     messages = get_flashed_messages(with_categories=True)
-    return render_template('url_id.html', url_data=url_id, messages=messages)
+    curr.execute("SELECT * FROM urls WHERE id = %s", (url_id,))
+    url_data = curr.fetchone()
+    return render_template('url_id.html', url_data=url_data, messages=messages)
