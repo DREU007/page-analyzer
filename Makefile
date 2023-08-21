@@ -1,4 +1,4 @@
-DB_NAME ?= urls_db
+DB_NAME ?= database
 PORT ?= 8000
 
 install:

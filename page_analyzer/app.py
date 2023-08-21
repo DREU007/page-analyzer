@@ -16,7 +16,6 @@ DATABASE_URL = os.getenv('DATABASE_URL')
 conn = psycopg2.connect(
         DATABASE_URL, cursor_factory=psycopg2.extras.RealDictCursor
 )
-curr = conn.cursor()
 locales = Locales()
 
 
@@ -52,27 +51,31 @@ def not_found(e):
 
 @app.route('/urls', methods=['GET'])
 def get_urls():
-    curr.execute("SELECT * FROM urls ORDER BY id DESC;")
-    sql_data = curr.fetchall()
+    with conn.cursor() as curr:
+        curr.execute("SELECT * FROM urls ORDER BY id DESC;")
+        sql_data = curr.fetchall()
     return render_template('urls.html', table_data=sql_data) 
 
 def get_existing_urls():
-    curr.execute('SELECT name FROM urls;')
-    sql_data = curr.fetchall()
+    with conn.cursor() as curr:
+        curr.execute('SELECT name FROM urls;')
+        sql_data = curr.fetchall()
     if sql_data:
         return [row['name'] for row in sql_data]
     return []
 
 def insert_url(normalized_url):
-    curr.execute(
-        'INSERT INTO urls (name, created_at) VALUES (%s, %s);',
-        (normalized_url, datetime.datetime.now().isoformat())
-    )
-    conn.commit()
+    with conn.cursor() as curr:
+        curr.execute(
+            'INSERT INTO urls (name, created_at) VALUES (%s, %s);',
+            (normalized_url, datetime.datetime.now().isoformat())
+        )
+        conn.commit()
 
 def get_url_id_by_name(normalized_url):
-    curr.execute('SELECT id FROM urls WHERE name = %s', (normalized_url,))
-    url_id = curr.fetchone()['id']
+    with conn.cursor() as curr:
+        curr.execute('SELECT id FROM urls WHERE name = %s', (normalized_url,))
+        url_id = curr.fetchone()['id']
     return url_id
 
 @app.route('/urls', methods=['POST'])
@@ -103,6 +106,7 @@ def post_urls():
 @app.route('/urls/<int:url_id>')
 def get_url_id(url_id):
     messages = get_flashed_messages(with_categories=True)
-    curr.execute("SELECT * FROM urls WHERE id = %s", (url_id,))
-    url_data = curr.fetchone()
+    with conn.cursor() as curr:
+        curr.execute("SELECT * FROM urls WHERE id = %s", (url_id,))
+        url_data = curr.fetchone()
     return render_template('url_id.html', url_data=url_data, messages=messages)
