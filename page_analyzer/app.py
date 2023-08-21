@@ -1,6 +1,7 @@
 import os
 import datetime
 import psycopg2
+import psycopg2.extras
 from flask import (
         Flask, render_template, redirect, url_for, make_response, request, flash,
         get_flashed_messages
@@ -12,7 +13,9 @@ app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY')
 
 DATABASE_URL = os.getenv('DATABASE_URL')
-conn = psycopg2.connect(DATABASE_URL)
+conn = psycopg2.connect(
+        DATABASE_URL, cursor_factory=psycopg2.extras.RealDictCursor
+)
 curr = conn.cursor()
 locales = Locales()
 
