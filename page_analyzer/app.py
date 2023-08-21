@@ -8,6 +8,10 @@ from flask import (
 )
 from page_analyzer.locales_loader import Locales
 from page_analyzer.url_tools import normalize, validate
+from dotenv import load_dotenv
+
+
+load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY')
