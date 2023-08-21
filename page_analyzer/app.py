@@ -52,45 +52,54 @@ def not_found(e):
 
 @app.route('/urls', methods=['GET'])
 def get_urls():
-    curr.execute("""
-    SELECT * FROM urls ORDER BY id DESC;
-    """)
-    sql_data = [row for row in curr.fetchall()]
+    curr.execute("SELECT * FROM urls ORDER BY id DESC;")
+    sql_data = curr.fetchall()
     return render_template('urls.html', table_data=sql_data) 
+
+def get_existing_urls():
+    curr.execute('SELECT name FROM urls;')
+    sql_data = curr.fetchall()
+    if sql_data:
+        return [row['name'] for row in sql_data]
+    return []
+
+def insert_url(normalized_url):
+    curr.execute(
+        'INSERT INTO urls (name, created_at) VALUES (%s, %s);',
+        (normalized_url, datetime.datetime.now().isoformat())
+    )
+    conn.commit()
+
+def get_url_id_by_name(normalized_url):
+    curr.execute('SELECT id FROM urls WHERE name = %s', (normalized_url,))
+    url_id = curr.fetchone()['id']
+    return url_id
 
 @app.route('/urls', methods=['POST'])
 def post_urls():
     url = request.form.get('url', False)
-    if url:
-        normalized_url = normalize(url)
-        if validate(normalized_url):
-            curr.execute('SELECT name FROM urls;')
-            existing_urls = [row[0] for row in curr.fetchall()]
-            if normalized_url in existing_urls:
-                flash('exist', 'info')
-            else:
-                curr.execute('''
-                    INSERT INTO urls (name, created_at)
-                    VALUES (%s, %s);
-                    ''',
-                    (normalized_url, datetime.datetime.now().isoformat())
-                )
-                conn.commit()
-                flash('added', 'success')
-
-            curr.execute(
-                'SELECT id FROM urls WHERE name = %s', (normalized_url,)
-            )
-            url_id = curr.fetchone()[0]
-
-            return make_response(redirect(
-                url_for('get_url_id', url_id=url_id), code=302
-            ))
+    if not url:
         flash('invalid', 'danger')
-    flash('missing', 'danger') 
-    return make_response(redirect(url_for('get_index'), code=302))
-    
+        flash('missing', 'danger') 
+        return make_response(redirect(url_for('get_index'), code=302))
 
+    normalized_url = normalize(url)
+    if not validate(normalized_url):
+        flash('invalid', 'danger') 
+        return make_response(redirect(url_for('get_index'), code=302))
+
+    existing_urls = get_existing_urls()
+    if normalized_url in existing_urls:
+        flash('exist', 'info')
+    else:
+        insert_url(normalized_url)
+        flash('added', 'success')
+
+    url_id = get_url_id_by_name(normalized_url)
+    return make_response(redirect(
+        url_for('get_url_id', url_id=url_id), code=302
+    ))
+    
 @app.route('/urls/<int:url_id>')
 def get_url_id(url_id):
     messages = get_flashed_messages(with_categories=True)

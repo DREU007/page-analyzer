@@ -11,11 +11,12 @@
         <th>{{ table.updated_at }}</th>
         <th>{{ table.code }}</th>
       </thead>
-      {% for row in table_data %}
-	      <tbody>
-	        {% for item in row %}
-	          <td>{{ item }}</td>
-	        {% endfor %}
+      {% for row in table_data %} <!-- Pagenation could be required later -->
+        <tbody>
+            <td>{{ row.id }}</td>
+            <td><a href="/urls/{{ row.id }}">{{ row.name }}</a></td>
+            <td></td>
+            <td></td>
         </tbody>
       {% endfor %}
      </table>
