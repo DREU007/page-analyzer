@@ -22,7 +22,11 @@
       </tbody>
     </table>
 
-    <h1 class="pt-5">{{ kv_dict.checks }}</h1>
+    <h1 class="pt-5">{{ kv_dict.validations }}</h1>
+    <form action="/urls/{{ url_data.id }}/checks" method="post">
+      <label class="visually-hidden" for="btn-start-validation">start validation</label>
+      <input class="btn btn-outline-info btn-dark my-2" id="btn-start-validation" type="submit" value="{{ kv_dict.button['btn-start-validation'] }}">
+    </form>
     <table class="table table-dark table-striped table-bordered" data-test="checks">
       <thead>
         <th>{{ table.id }}</th>
@@ -32,6 +36,18 @@
         <th>{{ table.description }}</th>
         <th>{{ table.created_at }}</th>
       </thead>
+      {% if url_checks %}
+        {% for row in url_checks %}
+          <tbody>
+            <th>{{ row.id }}</th>
+            <th>{{ row.code }}</th>
+            <th>{{ row.h1 }}</th>
+            <th>{{ row.title }}</th>
+            <th>{{ row.description }}</th>
+            <th>{{ row.created_at }}</th>
+          </tbody>
+        {% endfor %}
+      {% endif %}
     </table>
   </div>
 {% endblock %}
