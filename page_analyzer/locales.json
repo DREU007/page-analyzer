@@ -6,15 +6,16 @@
         "lang": "Languages",
         "description": " Validate web page SEO-adaptiveness",
         "button": {
-	    "btn-validate": "VALIDATE",
-	    "btn-start-validation": "Start validation"
+	    "btn-check": "CHECK",
+	    "btn-start-check": "Start check"
 	},
-	"validations": "Validations",
+	"checks": "Checks",
 	"flash": {
 	    "invalid": "Invalid URL",
 	    "missing": "URL required",
 	    "added": "Web page is successfully added",
-	    "exist": "Web page already exists"
+	    "exist": "Web page already exists",
+	    "ResponseError": "An error occurred while checking"
 	},
 	"table": {
 	    "id": "ID",
@@ -37,12 +38,13 @@
 	    "btn-validate": "ПРОВЕРИТЬ",
 	    "btn-start-validation": "Запустить проверку"
 	},
-	"validations": "Проверки",
+	"checks": "Проверки",
 	"flash": {
 	    "invalid": "Некорректный URL",
 	    "missing": "URL обязателен",
 	    "added": "Страница успешно добавлена",
-	    "exist": "Страница уже существует"
+	    "exist": "Страница уже существует",
+	    "ResponseError": "Произошла ошибка при проверке"
 	},
 	"table": {
 	    "id": "ID",

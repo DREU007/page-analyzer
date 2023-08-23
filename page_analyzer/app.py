@@ -5,9 +5,10 @@ from flask import (
 )
 import psycopg2
 import psycopg2.extras
+import requests
 
 from page_analyzer.locales_loader import Locales
-from page_analyzer.url_tools import normalize, validate
+from page_analyzer.url_tools import make_normalized_dict, validate
 from page_analyzer.db_processor import DB
 
 from dotenv import load_dotenv
@@ -31,6 +32,10 @@ def inject_kv_dict():
     cookies_lang = request.cookies.get('language', 'eng')
     return dict(kv_dict=locales.get_kv_dict(cookies_lang))
 
+@app.errorhandler(404)
+def not_found(e):
+    return render_template('404.html'), 404
+
 @app.route('/')
 def get_index():
     messages = get_flashed_messages(with_categories=True)
@@ -52,10 +57,6 @@ def get_eng_index():
     response.set_cookie('language', 'eng')
     return response
     
-@app.errorhandler(404)
-def not_found(e):
-    return render_template('404.html'), 404
-
 @app.route('/urls', methods=['GET'])
 def get_urls():
     sql_data = db.get_urls_data()
@@ -69,19 +70,19 @@ def post_urls():
         flash('missing', 'danger') 
         return make_response(redirect(url_for('get_index'), code=302))
 
-    normalized_url = normalize(url)
-    if not validate(normalized_url):
+    normalized_url_dict = make_normalized_dict(url)
+    if not validate(normalized_url_dict["normalized_url"]):
         flash('invalid', 'danger') 
         return make_response(redirect(url_for('get_index'), code=302))
 
     existing_urls = db.get_existing_urls()
-    if normalized_url in existing_urls:
+    if normalized_url_dict["db_normalized_url"] in existing_urls:
         flash('exist', 'info')
     else:
-        db.insert_url(normalized_url)
+        db.insert_url(normalized_url_dict["db_normalized_url"])
         flash('added', 'success')
 
-    url_id = db.get_url_id_by_name(normalized_url)
+    url_id = db.get_url_id_by_name(normalized_url_dict["db_normalized_url"])
     return make_response(redirect(
         url_for('get_url_id', url_id=url_id), code=302
     ))
@@ -100,5 +101,11 @@ def get_url_id(url_id):
 
 @app.route('/urls/<int:url_id>/checks', methods=['POST'])
 def post_url_id_checks(url_id):
-    db.insert_check(url_id) 
+    url_name = db.get_url_name(url_id)
+    try:
+        response = requests.get(url_name)
+        db.insert_check(url_id, response.status_code) 
+    except requests.exceptions.RequestException:
+        flash('ResponseError', 'danger')
+
     return redirect(url_for('get_url_id', url_id=url_id), 302)

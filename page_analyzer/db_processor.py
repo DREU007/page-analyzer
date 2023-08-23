@@ -23,6 +23,35 @@ class DB:
         if sql_data:
             return [row['name'] for row in sql_data]
         return []
+
+    def get_url_data(self, url_id):
+        with self.conn.cursor() as curr:
+            curr.execute("SELECT * FROM urls WHERE id = %s", (url_id,))
+            url_data = curr.fetchone()
+        return url_data
+    
+    def get_url_id_by_name(self, normalized_url):
+        with self.conn.cursor() as curr:
+            curr.execute(
+                'SELECT id FROM urls WHERE name = %s', (normalized_url,)
+            )
+            url_id = curr.fetchone()['id']
+        return url_id
+
+    def get_url_name(self, url_id):
+        with self.conn.cursor() as curr:
+            curr.execute('SELECT name FROM urls WHERE id = %s', (url_id,))
+            sql_data = curr.fetchone()
+        return sql_data['name']
+
+    def get_checks_data(self, url_id):
+        with self.conn.cursor() as curr:
+            curr.execute("""
+                SELECT * FROM url_checks WHERE url_id = %s ORDER BY id DESC
+                """, (url_id,)
+                )
+            sql_data = curr.fetchall()
+            return sql_data
     
     def insert_url(self, normalized_url):
         with self.conn.cursor() as curr:
@@ -31,29 +60,12 @@ class DB:
                 (normalized_url, datetime.date.today().isoformat())
             )
             self.conn.commit()
-    
-    def get_url_id_by_name(self, normalized_url):
+
+    def insert_check(self, url_id, status_code):
         with self.conn.cursor() as curr:
-            curr.execute('SELECT id FROM urls WHERE name = %s', (normalized_url,))
-            url_id = curr.fetchone()['id']
-        return url_id
-    
-    def insert_check(self, url_id):
-        with self.conn.cursor() as curr:
-            curr.execute(
-                "INSERT INTO url_checks (url_id, created_at) VALUES (%s, %s);",
-                (url_id, datetime.date.today().isoformat())
+            curr.execute("""
+                INSERT INTO url_checks (url_id, status_code, created_at)
+                VALUES (%s, %s, %s);
+                """, (url_id, status_code, datetime.date.today().isoformat())
             ) 
             self.conn.commit()
-    
-    def get_checks_data(self, url_id):
-        with self.conn.cursor() as curr:
-            curr.execute("SELECT * FROM url_checks WHERE url_id = %s ORDER BY id DESC", (url_id,))
-            sql_data = curr.fetchall()
-            return sql_data
-    
-    def get_url_data(self, url_id):
-        with self.conn.cursor() as curr:
-            curr.execute("SELECT * FROM urls WHERE id = %s", (url_id,))
-            url_data = curr.fetchone()
-        return url_data
