@@ -1,6 +1,11 @@
 import os
 from flask import (
-        Flask, render_template, redirect, url_for, make_response, request, flash,
+        Flask,
+        render_template,
+        redirect,
+        url_for,
+        make_response,
+        request, flash,
         get_flashed_messages
 )
 import psycopg2
@@ -32,14 +37,17 @@ def inject_kv_dict():
     cookies_lang = request.cookies.get('language', 'eng')
     return dict(kv_dict=locales.get_kv_dict(cookies_lang))
 
+
 @app.errorhandler(404)
 def not_found(e):
     return render_template('404.html'), 404
+
 
 @app.route('/')
 def get_index():
     messages = get_flashed_messages(with_categories=True)
     return render_template('index.html', messages=messages)
+
 
 @app.route('/ru/')
 def get_ru_index():
@@ -49,6 +57,7 @@ def get_ru_index():
     response.set_cookie('language', 'rus')
     return response
 
+
 @app.route('/en/')
 def get_eng_index():
     response = make_response(redirect(
@@ -56,23 +65,25 @@ def get_eng_index():
     ))
     response.set_cookie('language', 'eng')
     return response
-    
+
+
 @app.route('/urls', methods=['GET'])
 def get_urls():
     sql_data = db.get_urls_data()
-    return render_template('urls.html', table_data=sql_data) 
+    return render_template('urls.html', table_data=sql_data)
+
 
 @app.route('/urls', methods=['POST'])
 def post_urls():
     url = request.form.get('url', False)
     if not url:
         flash('invalid', 'danger')
-        flash('missing', 'danger') 
+        flash('missing', 'danger')
         return make_response(redirect(url_for('get_index'), code=302))
 
     normalized_url_dict = make_normalized_dict(url)
     if not validate(normalized_url_dict["normalized_url"]):
-        flash('invalid', 'danger') 
+        flash('invalid', 'danger')
         return make_response(redirect(url_for('get_index'), code=302))
 
     existing_urls = db.get_existing_urls()
@@ -87,6 +98,7 @@ def post_urls():
         url_for('get_url_id', url_id=url_id), code=302
     ))
 
+
 @app.route('/urls/<int:url_id>')
 def get_url_id(url_id):
     messages = get_flashed_messages(with_categories=True)
@@ -98,6 +110,7 @@ def get_url_id(url_id):
             url_checks=url_checks,
             messages=messages
     )
+
 
 @app.route('/urls/<int:url_id>/checks', methods=['POST'])
 def post_url_id_checks(url_id):
@@ -116,7 +129,7 @@ def post_url_id_checks(url_id):
                 h1=h1,
                 title=title,
                 description=description
-        ) 
+        )
     except requests.exceptions.RequestException:
         flash('ResponseError', 'danger')
 

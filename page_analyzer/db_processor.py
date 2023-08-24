@@ -15,7 +15,7 @@ class DB:
             """)
             sql_data = curr.fetchall()
         return sql_data
-    
+
     def get_existing_urls(self):
         with self.conn.cursor() as curr:
             curr.execute('SELECT name FROM urls;')
@@ -29,7 +29,7 @@ class DB:
             curr.execute("SELECT * FROM urls WHERE id = %s", (url_id,))
             url_data = curr.fetchone()
         return url_data
-    
+
     def get_url_id_by_name(self, normalized_url):
         with self.conn.cursor() as curr:
             curr.execute(
@@ -52,7 +52,7 @@ class DB:
                 )
             sql_data = curr.fetchall()
             return sql_data
-    
+
     def insert_url(self, normalized_url):
         with self.conn.cursor() as curr:
             curr.execute(
@@ -76,5 +76,5 @@ class DB:
                     title,
                     description
                 )
-            ) 
+            )
             self.conn.commit()
