@@ -34,7 +34,7 @@ locales = Locales()
 
 @app.context_processor
 def inject_kv_dict():
-    cookies_lang = request.cookies.get('language', 'eng')
+    cookies_lang = request.cookies.get('language', 'rus')
     return dict(kv_dict=locales.get_kv_dict(cookies_lang))
 
 
