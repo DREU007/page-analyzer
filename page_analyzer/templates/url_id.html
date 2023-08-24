@@ -41,9 +41,9 @@
           <tbody>
             <th>{{ row.id }}</th>
             <th>{{ row.status_code }}</th>
-            <th>{{ row.h1 }}</th>
-            <th>{{ row.title }}</th>
-            <th>{{ row.description }}</th>
+            <th>{{ row.h1 or "" }}</th>
+            <th>{{ row.title or "" }}</th>
+            <th>{{ row.description or "" }}</th>
             <th>{{ row.created_at }}</th>
           </tbody>
         {% endfor %}
