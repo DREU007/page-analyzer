@@ -28,7 +28,8 @@ DATABASE_URL = os.getenv('DATABASE_URL')
 conn = psycopg2.connect(
         DATABASE_URL, cursor_factory=psycopg2.extras.RealDictCursor
 )
-db = DB(conn)
+curr = conn.cursor()
+db = DB(conn, curr)
 locales = Locales()
 
 
