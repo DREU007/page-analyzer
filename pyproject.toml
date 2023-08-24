@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "hexlet-code"
-version = "0.1.0"
-description = "Page analyzer is a web tool to check iweb page readiness for SEO (Search Engine Optimization)"
+version = "1.0.0"
+description = "SEO Page Analyzer is a web tool to check a web page readiness for SEO (Search Engine Optimization)"
 authors = ["Denis Bolshakov <dreu007@gmail.com>"]
 readme = "README.md"
 packages = [{include = "page_analyzer"}]
@@ -9,14 +9,13 @@ packages = [{include = "page_analyzer"}]
 [tool.poetry.dependencies]
 python = "^3.10"
 Flask = "^2.3.2"
-gunicorn = "^21.2.0"
+gunicorn = "20.1.0"
 python-dotenv = "^1.0.0"
-flake8 = "^6.1.0"
-pytest = "^7.4.0"
 psycopg2-binary = "^2.9.7"
 validators = "^0.21.2"
 requests = "^2.31.0"
 beautifulsoup4 = "^4.12.2"
+flake8 = "^6.1.0"
 
 [build-system]
 requires = ["poetry-core"]
