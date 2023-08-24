@@ -14,28 +14,28 @@ def make_normalized_dict(url):
 def validate(normalized_url):
     return domain(normalized_url)
 
-def normalize_255(func):
-    def wrapper(*args, **kwargs):
-        result = func(*args, **kwargs)
-        stripped_result = str(result).strip()
-        if len(stripped_result) > 255:
-            return stripped_item[:252] + "..."
-        return stripped_result
-    return wrapper
+#def normalize_255(func):
+#    def wrapper(*args, **kwargs):
+#        result = func(*args, **kwargs)
+#        stripped_result = str(result).strip()
+#        if len(stripped_result) > 255:
+#            return stripped_item[:252] + "..."
+#        return stripped_result
+#    return wrapper
 
 class ParseHtml:
     def __init__(self, html):
         self.html_soup = BeautifulSoup(html, 'html.parser')
 
-    @normalize_255
+#    @normalize_255
     def get_title(self):
         return self.html_soup.title.string
     
-    @normalize_255
+#    @normalize_255
     def get_h1(self):
         return self.html_soup.h1.string
 
-    @normalize_255
+#    @normalize_255
     def get_meta_content_attr(self):
         for meta in self.html_soup.find_all('meta'):
             if meta.get('name') == 'description': 
