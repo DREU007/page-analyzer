@@ -61,11 +61,20 @@ class DB:
             )
             self.conn.commit()
 
-    def insert_check(self, url_id, status_code):
+    def insert_check(self, url_id, status_code, h1, title, description):
         with self.conn.cursor() as curr:
             curr.execute("""
-                INSERT INTO url_checks (url_id, status_code, created_at)
-                VALUES (%s, %s, %s);
-                """, (url_id, status_code, datetime.date.today().isoformat())
+                INSERT INTO url_checks (
+                    url_id, status_code, created_at, h1, title, description
+                )
+                VALUES (%s, %s, %s, %s, %s, %s);
+                """, (
+                    url_id,
+                    status_code,
+                    datetime.date.today().isoformat(),
+                    h1,
+                    title,
+                    description
+                )
             ) 
             self.conn.commit()

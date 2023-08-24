@@ -8,7 +8,7 @@ import psycopg2.extras
 import requests
 
 from page_analyzer.locales_loader import Locales
-from page_analyzer.url_tools import make_normalized_dict, validate
+from page_analyzer.url_tools import make_normalized_dict, validate, ParseHtml
 from page_analyzer.db_processor import DB
 
 from dotenv import load_dotenv
@@ -104,7 +104,19 @@ def post_url_id_checks(url_id):
     url_name = db.get_url_name(url_id)
     try:
         response = requests.get(url_name)
-        db.insert_check(url_id, response.status_code) 
+        html = ParseHtml(response.content)
+
+        h1 = html.get_h1()
+        title = html.get_title()
+        description = html.get_meta_content_attr()
+
+        db.insert_check(
+                url_id,
+                response.status_code,
+                h1=h1,
+                title=title,
+                description=description
+        ) 
     except requests.exceptions.RequestException:
         flash('ResponseError', 'danger')
 
