@@ -15,16 +15,17 @@ def make_normalized_dict(url):
 def validate(normalized_url):
     return domain(normalized_url)
 
+
 def normalize_255(func):
-   def wrapper(*args, **kwargs):
-       result = func(*args, **kwargs)
-       if result is None:
-           return
-       stripped_result = str(result).strip()
-       if len(stripped_result) > 255:
-           return stripped_item[:252] + "..."
-       return stripped_result
-   return wrapper
+    def wrapper(*args, **kwargs):
+        result = func(*args, **kwargs)
+        if result is None:
+            return
+        stripped_result = str(result).strip()
+        if len(stripped_result) > 255:
+            return stripped_result[:252] + "..."
+        return stripped_result
+    return wrapper
 
 
 class ParseHtml:
