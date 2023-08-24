@@ -7,11 +7,8 @@ install:
 build:
 	./build.sh
 
-test:
-	poetry run pytest page_analyzer tests
-
 lint:
-	poetry run flake8 page_analyzer tests
+	poetry run flake8 page_analyzer
 
 dev:
 	poetry run flask --app page_analyzer:app --debug run
