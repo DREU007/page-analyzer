@@ -22,9 +22,6 @@ start:
 schema-load:
 	psql $(DB_NAME) < database.sql
 
-# data-load:
-#	psql $(DB_NAME) < database.sql
-
 db-reset:
 	dropdb $(DB_NAME) || true
 	createdb $(DB_NAME)
