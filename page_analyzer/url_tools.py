@@ -1,6 +1,7 @@
 from urllib.parse import urlparse
 from validators import url as validate_url
 from bs4 import BeautifulSoup
+from requests.exceptions import RequestException as request_exception
 
 
 def normalize(url):
@@ -10,6 +11,12 @@ def normalize(url):
 
 def validate(normalized_url):
     return validate_url(normalized_url)
+
+
+def validate_status_code(status_code):
+    if status_code == 500:
+        raise request_exception("Broken URL!")
+    return status_code
 
 
 def _normalize_255(func):
