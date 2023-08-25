@@ -39,12 +39,12 @@
       {% if url_checks %}
         {% for row in url_checks %}
           <tbody>
-            <th>{{ row.id }}</th>
-            <th>{{ row.status_code }}</th>
-            <th>{{ row.h1 or "" }}</th>
-            <th>{{ row.title or "" }}</th>
-            <th>{{ row.description or "" }}</th>
-            <th>{{ row.created_at }}</th>
+            <td>{{ row.id }}</th>
+            <td>{{ row.status_code }}</th>
+            <td>{{ row.h1 or "" }}</th>
+            <td>{{ row.title or "" }}</th>
+            <td>{{ row.description or "" }}</th>
+            <td>{{ row.created_at }}</th>
           </tbody>
         {% endfor %}
       {% endif %}
