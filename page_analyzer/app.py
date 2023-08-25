@@ -14,7 +14,7 @@ import psycopg2.extras
 import requests
 
 from page_analyzer.locales_loader import Locales
-from page_analyzer.url_tools import make_normalized_dict, validate, ParseHtml
+from page_analyzer.url_tools import normalize, validate, ParseHtml
 from page_analyzer.db_processor import DB
 
 from dotenv import load_dotenv
@@ -85,19 +85,19 @@ def post_urls():
         flash('missing', 'danger')
         return make_response(redirect(url_for('get_index'), code=302))
 
-    normalized_url_dict = make_normalized_dict(url)
-    if not validate(normalized_url_dict["normalized_url"]):
+    normalized_url = normalize(url)
+    if not validate(normalized_url):
         flash('invalid', 'danger')
         return make_response(redirect(url_for('get_index'), code=302))
 
     existing_urls = db.get_existing_urls()
-    if normalized_url_dict["db_normalized_url"] in existing_urls:
+    if normalized_url in existing_urls:
         flash('exist', 'info')
     else:
-        db.insert_url(normalized_url_dict["db_normalized_url"])
+        db.insert_url(normalized_url)
         flash('added', 'success')
 
-    url_id = db.get_url_id_by_name(normalized_url_dict["db_normalized_url"])
+    url_id = db.get_url_id_by_name(normalized_url)
     return make_response(redirect(
         url_for('get_url_id', url_id=url_id), code=302
     ))
@@ -134,6 +134,7 @@ def post_url_id_checks(url_id):
                 title=title,
                 description=description
         )
+        flash('SuccessfullCheck', 'success')
     except requests.exceptions.RequestException:
         flash('ResponseError', 'danger')
 

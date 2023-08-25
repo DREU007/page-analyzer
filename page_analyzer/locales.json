@@ -15,6 +15,7 @@
 	    "missing": "URL required",
 	    "added": "Web page is successfully added",
 	    "exist": "Web page already exists",
+	    "SuccessfullCheck": "URL is successfully checked",
 	    "ResponseError": "An error occurred while checking"
 	},
 	"table": {
@@ -44,6 +45,7 @@
 	    "missing": "URL обязателен",
 	    "added": "Страница успешно добавлена",
 	    "exist": "Страница уже существует",
+	    "SuccessfullCheck": "Страница успешно проверена",
 	    "ResponseError": "Произошла ошибка при проверке"
 	},
 	"table": {
