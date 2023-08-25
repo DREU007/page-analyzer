@@ -9,6 +9,7 @@ from flask import (
         get_flashed_messages
 )
 import psycopg2
+import psycopg2.pool
 import psycopg2.extras
 import requests
 
@@ -25,10 +26,13 @@ app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY')
 
 DATABASE_URL = os.getenv('DATABASE_URL')
-conn = psycopg2.connect(
-        DATABASE_URL, cursor_factory=psycopg2.extras.RealDictCursor
+conn_pool = psycopg2.pool.SimpleConnectionPool(
+        minconn=1,
+        maxconn=20,
+        dsn=DATABASE_URL,
+        cursor_factory=psycopg2.extras.RealDictCursor
 )
-db = DB(conn)
+db = DB(conn_pool)
 locales = Locales()
 
 
