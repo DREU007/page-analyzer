@@ -3,7 +3,7 @@ import datetime
 
 class DB:
     def __init__(self, conn_pool):
-       self.conn_pool = conn_pool
+        self.conn_pool = conn_pool
 
     def get_urls_data(self):
         with self.conn_pool.getconn() as conn:

@@ -1,5 +1,5 @@
 from urllib.parse import urlparse
-from validators import url as validate_url 
+from validators import url as validate_url
 from bs4 import BeautifulSoup
 
 
