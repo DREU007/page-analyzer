@@ -88,12 +88,12 @@ def post_urls():
     if not url:
         flash('invalid', 'danger')
         flash('missing', 'danger')
-        return make_response(redirect(url_for('get_index'), code=302))
+        return make_response(redirect(url_for('get_index'), code=422))
 
     normalized_url = normalize(url)
     if not validate(normalized_url):
         flash('invalid', 'danger')
-        return make_response(redirect(url_for('get_index'), code=302))
+        return make_response(redirect(url_for('get_index'), code=422))
 
     existing_urls = db.get_existing_urls()
     if normalized_url in existing_urls:
