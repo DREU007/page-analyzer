@@ -71,18 +71,20 @@ class DB:
     def insert_check(self, url_id, status_code, h1, title, description):
         with self.conn_pool.getconn() as conn:
             curr = conn.cursor()
-            curr.execute("""
+            curr.execute(
+                """
                 INSERT INTO url_checks (
                     url_id, status_code, created_at, h1, title, description
                 )
                 VALUES (%s, %s, %s, %s, %s, %s);
-                """, (
+                """,
+                (
                     url_id,
-                     status_code,
-                     datetime.date.today().isoformat(),
-                     h1,
-                     title,
-                     description
+                    status_code,
+                    datetime.date.today().isoformat(),
+                    h1,
+                    title,
+                    description
                 )
             )
             conn.commit()
