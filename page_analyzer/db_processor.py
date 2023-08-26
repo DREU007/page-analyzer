@@ -55,7 +55,7 @@ class DB:
             curr.execute("""
                 SELECT * FROM url_checks WHERE url_id = %s ORDER BY id DESC
                 """, (url_id,)
-                )
+            )
             sql_data = curr.fetchall()
             return sql_data
 
@@ -77,12 +77,12 @@ class DB:
                 )
                 VALUES (%s, %s, %s, %s, %s, %s);
                 """, (
-                    url_id,
-                    status_code,
-                    datetime.date.today().isoformat(),
-                    h1,
-                    title,
-                    description
+                url_id,
+                status_code,
+                datetime.date.today().isoformat(),
+                h1,
+                title,
+                description
                 )
             )
             conn.commit()

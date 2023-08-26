@@ -1,12 +1,12 @@
 import os
 from flask import (
-        Flask,
-        render_template,
-        redirect,
-        url_for,
-        make_response,
-        request, flash,
-        get_flashed_messages
+    Flask,
+    render_template,
+    redirect,
+    url_for,
+    make_response,
+    request, flash,
+    get_flashed_messages
 )
 import psycopg2
 import psycopg2.pool
@@ -32,10 +32,10 @@ app.secret_key = os.environ.get('SECRET_KEY')
 
 DATABASE_URL = os.getenv('DATABASE_URL')
 conn_pool = psycopg2.pool.SimpleConnectionPool(
-        minconn=1,
-        maxconn=20,
-        dsn=DATABASE_URL,
-        cursor_factory=psycopg2.extras.RealDictCursor
+    minconn=1,
+    maxconn=20,
+    dsn=DATABASE_URL,
+    cursor_factory=psycopg2.extras.RealDictCursor
 )
 db = DB(conn_pool)
 locales = Locales()
@@ -122,10 +122,10 @@ def get_url_id(url_id):
     url_data = db.get_url_data(url_id)
     url_checks = db.get_checks_data(url_id)
     return render_template(
-            'url_id.html',
-            url_data=url_data,
-            url_checks=url_checks,
-            messages=messages
+        'url_id.html',
+        url_data=url_data,
+        url_checks=url_checks,
+        messages=messages
     )
 
 
@@ -142,11 +142,11 @@ def post_url_id_checks(url_id):
         description = html.get_meta_content_attr()
 
         db.insert_check(
-                url_id,
-                status_code,
-                h1=h1,
-                title=title,
-                description=description
+            url_id,
+            status_code,
+            h1=h1,
+            title=title,
+            description=description
         )
         flash('SuccessfullCheck', 'success')
     except requests.exceptions.RequestException:
