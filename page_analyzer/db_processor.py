@@ -77,12 +77,12 @@ class DB:
                 )
                 VALUES (%s, %s, %s, %s, %s, %s);
                 """, (
-                url_id,
-                status_code,
-                datetime.date.today().isoformat(),
-                h1,
-                title,
-                description
+                    url_id,
+                     status_code,
+                     datetime.date.today().isoformat(),
+                     h1,
+                     title,
+                     description
                 )
             )
             conn.commit()
