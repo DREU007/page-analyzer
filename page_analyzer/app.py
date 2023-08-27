@@ -1,20 +1,27 @@
 import os
 import datetime
 from flask import (
-        Flask,
-        render_template,
-        redirect,
-        url_for,
-        make_response,
-        request, flash,
-        get_flashed_messages
+    Flask,
+    render_template,
+    redirect,
+    url_for,
+    make_response,
+    request, flash,
+    get_flashed_messages
 )
 import psycopg2
+import psycopg2.pool
 import psycopg2.extras
 import requests
 
 from page_analyzer.locales_loader import Locales
-from page_analyzer.url_tools import make_normalized_dict, validate, ParseHtml
+from page_analyzer.url_tools import (
+    normalize,
+    validate,
+    validate_status_code,
+    ParseHtml
+)
+from page_analyzer.db_processor import DB
 
 from dotenv import load_dotenv
 
@@ -25,10 +32,13 @@ app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY')
 
 DATABASE_URL = os.getenv('DATABASE_URL')
-conn = psycopg2.connect(
-        DATABASE_URL, cursor_factory=psycopg2.extras.RealDictCursor
+conn_pool = psycopg2.pool.SimpleConnectionPool(
+    minconn=1,
+    maxconn=20,
+    dsn=DATABASE_URL,
+    cursor_factory=psycopg2.extras.RealDictCursor
 )
-curr = conn.cursor()
+db = DB(conn_pool)
 locales = Locales()
 
 
@@ -79,21 +89,29 @@ def post_urls():
     if not url:
         flash('invalid', 'danger')
         flash('missing', 'danger')
-        return make_response(redirect(url_for('get_index'), code=302))
+        messages = get_flashed_messages(with_categories=True)
+        return render_template(
+            'index.html',
+            messages=messages
+        ), 422
 
-    normalized_url_dict = make_normalized_dict(url)
-    if not validate(normalized_url_dict["normalized_url"]):
+    normalized_url = normalize(url)
+    if not validate(normalized_url):
         flash('invalid', 'danger')
-        return make_response(redirect(url_for('get_index'), code=302))
+        messages = get_flashed_messages(with_categories=True)
+        return render_template(
+            'index.html',
+            messages=messages
+        ), 422
 
-    existing_urls = get_existing_urls()
-    if normalized_url_dict["db_normalized_url"] in existing_urls:
+    existing_urls = db.get_existing_urls()
+    if normalized_url in existing_urls:
         flash('exist', 'info')
     else:
-        insert_url(normalized_url_dict["db_normalized_url"])
+        db.insert_url(normalized_url)
         flash('added', 'success')
 
-    url_id = get_url_id_by_name(normalized_url_dict["db_normalized_url"])
+    url_id = db.get_url_id_by_name(normalized_url)
     return make_response(redirect(
         url_for('get_url_id', url_id=url_id), code=302
     ))
@@ -105,10 +123,10 @@ def get_url_id(url_id):
     url_data = get_url_data(url_id)
     url_checks = get_checks_data(url_id)
     return render_template(
-            'url_id.html',
-            url_data=url_data,
-            url_checks=url_checks,
-            messages=messages
+        'url_id.html',
+        url_data=url_data,
+        url_checks=url_checks,
+        messages=messages
     )
 
 
@@ -117,19 +135,21 @@ def post_url_id_checks(url_id):
     url_name = get_url_name(url_id)
     try:
         response = requests.get(url_name)
-        html = ParseHtml(response.content)
+        status_code = validate_status_code(response.status_code)
 
+        html = ParseHtml(response.content)
         h1 = html.get_h1()
         title = html.get_title()
         description = html.get_meta_content_attr()
 
-        insert_check(
-                url_id,
-                response.status_code,
-                h1=h1,
-                title=title,
-                description=description
+        db.insert_check(
+            url_id,
+            status_code,
+            h1=h1,
+            title=title,
+            description=description
         )
+        flash('SuccessfullCheck', 'success')
     except requests.exceptions.RequestException:
         flash('ResponseError', 'danger')
 
