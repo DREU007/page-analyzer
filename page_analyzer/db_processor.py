@@ -1,33 +1,31 @@
+import os
 import datetime
 
 import psycopg2
 import psycopg2.pool
 import psycopg2.extras
 
+from dotenv import load_dotenv
 
-DEFAULT_CFG = {
+
+load_dotenv()
+
+DATABASE_URL = os.getenv('DATABASE_URL')
+CONFIG = {
     'minconn': 1,
     'maxconn': 20,
-    'cursor_factory': psycopg2.extras.RealDictCursor
+    'cursor_factory': psycopg2.extras.RealDictCursor,
+    'dsn': DATABASE_URL
 }
 
 
+def get_connection():
+    return psycopg2.pool.SimpleConnectionPool(**CONFIG)
+
+
 class DB:
-    def __init__(self, **options):
-        config = DEFAULT_CFG | options
-        self.conn_pool = psycopg2.pool.SimpleConnectionPool(
-            **config
-        )
-
-#    def get_connection(self, func):
-#        with self.conn_pool.getconn() as conn:
-#            try:
-#                curr = conn.curr()
-#
-#
-
-    def get_urls_data(self):
-        with self.conn_pool.getconn() as conn:
+    def get_urls_data(self, conn_pool):
+        with conn_pool.getconn() as conn:
             curr = conn.cursor()
             curr.execute("""
             SELECT DISTINCT ON (urls.id) urls.id,
@@ -38,8 +36,8 @@ class DB:
             sql_data = curr.fetchall()
         return sql_data
 
-    def get_existing_urls(self):
-        with self.conn_pool.getconn() as conn:
+    def get_existing_urls(self, conn_pool):
+        with conn_pool.getconn() as conn:
             curr = conn.cursor()
             curr.execute('SELECT name FROM urls;')
             sql_data = curr.fetchall()
@@ -47,15 +45,15 @@ class DB:
                 return [row['name'] for row in sql_data]
         return []
 
-    def get_url_data(self, url_id):
-        with self.conn_pool.getconn() as conn:
+    def get_url_data(self, conn_pool, url_id):
+        with conn_pool.getconn() as conn:
             curr = conn.cursor()
             curr.execute("SELECT * FROM urls WHERE id = %s", (url_id,))
             url_data = curr.fetchone()
         return url_data
 
-    def get_url_id_by_name(self, normalized_url):
-        with self.conn_pool.getconn() as conn:
+    def get_url_id_by_name(self, conn_pool, normalized_url):
+        with conn_pool.getconn() as conn:
             curr = conn.cursor()
             curr.execute(
                 'SELECT id FROM urls WHERE name = %s', (normalized_url,)
@@ -63,15 +61,15 @@ class DB:
             url_id = curr.fetchone()['id']
         return url_id
 
-    def get_url_name(self, url_id):
-        with self.conn_pool.getconn() as conn:
+    def get_url_name(self, conn_pool, url_id):
+        with conn_pool.getconn() as conn:
             curr = conn.cursor()
             curr.execute('SELECT name FROM urls WHERE id = %s', (url_id,))
             sql_data = curr.fetchone()
         return sql_data['name']
 
-    def get_checks_data(self, url_id):
-        with self.conn_pool.getconn() as conn:
+    def get_checks_data(self, conn_pool, url_id):
+        with conn_pool.getconn() as conn:
             curr = conn.cursor()
             curr.execute("""
                 SELECT * FROM url_checks WHERE url_id = %s ORDER BY id DESC
@@ -80,8 +78,8 @@ class DB:
             sql_data = curr.fetchall()
             return sql_data
 
-    def insert_url(self, normalized_url):
-        with self.conn_pool.getconn() as conn:
+    def insert_url(self, conn_pool, normalized_url):
+        with conn_pool.getconn() as conn:
             curr = conn.cursor()
             curr.execute(
                 'INSERT INTO urls (name, created_at) VALUES (%s, %s);',
@@ -89,8 +87,10 @@ class DB:
             )
             conn.commit()
 
-    def insert_check(self, url_id, status_code, h1, title, description):
-        with self.conn_pool.getconn() as conn:
+    def insert_check(
+            self, conn_pool, url_id, status_code, h1, title, description
+    ):
+        with conn_pool.getconn() as conn:
             curr = conn.cursor()
             curr.execute(
                 """

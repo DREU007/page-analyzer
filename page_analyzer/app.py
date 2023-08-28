@@ -17,7 +17,7 @@ from page_analyzer.url_tools import (
     validate_status_code,
     ParseHtml
 )
-from page_analyzer.db_processor import DB
+from page_analyzer.db_processor import get_connection, DB
 
 from dotenv import load_dotenv
 
@@ -27,8 +27,8 @@ load_dotenv()
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY')
 
-DATABASE_URL = os.getenv('DATABASE_URL')
-db = DB(dsn=DATABASE_URL)
+conn = get_connection()
+db = DB()
 
 locales = Locales()
 
@@ -70,7 +70,7 @@ def get_eng_index():
 
 @app.route('/urls', methods=['GET'])
 def get_urls():
-    sql_data = db.get_urls_data()
+    sql_data = db.get_urls_data(conn)
     return render_template('urls.html', table_data=sql_data)
 
 
@@ -95,14 +95,14 @@ def post_urls():
             messages=messages
         ), 422
 
-    existing_urls = db.get_existing_urls()
+    existing_urls = db.get_existing_urls(conn)
     if normalized_url in existing_urls:
         flash('exist', 'info')
     else:
-        db.insert_url(normalized_url)
+        db.insert_url(conn, normalized_url)
         flash('added', 'success')
 
-    url_id = db.get_url_id_by_name(normalized_url)
+    url_id = db.get_url_id_by_name(conn, normalized_url)
     return make_response(redirect(
         url_for('get_url_id', url_id=url_id), code=302
     ))
@@ -111,8 +111,8 @@ def post_urls():
 @app.route('/urls/<int:url_id>')
 def get_url_id(url_id):
     messages = get_flashed_messages(with_categories=True)
-    url_data = db.get_url_data(url_id)
-    url_checks = db.get_checks_data(url_id)
+    url_data = db.get_url_data(conn, url_id)
+    url_checks = db.get_checks_data(conn, url_id)
     return render_template(
         'url_id.html',
         url_data=url_data,
@@ -123,7 +123,7 @@ def get_url_id(url_id):
 
 @app.route('/urls/<int:url_id>/checks', methods=['POST'])
 def post_url_id_checks(url_id):
-    url_name = db.get_url_name(url_id)
+    url_name = db.get_url_name(conn, url_id)
     try:
         response = requests.get(url_name)
         status_code = validate_status_code(response.status_code)
@@ -134,6 +134,7 @@ def post_url_id_checks(url_id):
         description = html.get_meta_content_attr()
 
         db.insert_check(
+            conn,
             url_id,
             status_code,
             h1=h1,
