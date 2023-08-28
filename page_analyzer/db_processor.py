@@ -1,9 +1,30 @@
 import datetime
 
+import psycopg2
+import psycopg2.pool
+import psycopg2.extras
+
+
+DEFAULT_CFG = {
+    'minconn': 1,
+    'maxconn': 20,
+    'cursor_factory': psycopg2.extras.RealDictCursor
+}
+
 
 class DB:
-    def __init__(self, conn_pool):
-        self.conn_pool = conn_pool
+    def __init__(self, **options):
+        config = DEFAULT_CFG | options
+        self.conn_pool = psycopg2.pool.SimpleConnectionPool(
+            **config
+        )
+
+#    def get_connection(self, func):
+#        with self.conn_pool.getconn() as conn:
+#            try:
+#                curr = conn.curr()
+#
+#
 
     def get_urls_data(self):
         with self.conn_pool.getconn() as conn:
