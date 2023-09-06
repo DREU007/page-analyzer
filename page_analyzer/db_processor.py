@@ -44,7 +44,8 @@ class DB:
                 curr.execute("""
                 SELECT DISTINCT ON (urls.id) urls.id,
                     urls.name, url_checks.status_code, url_checks.created_at
-                    FROM urls LEFT JOIN url_checks ON urls.id = url_checks.url_id
+                    FROM urls LEFT JOIN url_checks
+                        ON urls.id = url_checks.url_id
                 ORDER BY urls.id DESC;
                 """)
                 sql_data = curr.fetchall()
