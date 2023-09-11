@@ -26,6 +26,8 @@ def init_db_pool():
 
 @contextmanager
 def get_connection():
+    if 'db_pool' not in globals():
+        init_db_pool()
     try:
         conn = db_pool.getconn()
         yield conn

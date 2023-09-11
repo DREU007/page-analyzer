@@ -1,4 +1,5 @@
 import os
+import requests
 from flask import (
     Flask,
     render_template,
@@ -8,7 +9,6 @@ from flask import (
     request, flash,
     get_flashed_messages
 )
-import requests
 
 from page_analyzer.locales_loader import Locales
 from page_analyzer.url_tools import (
@@ -24,15 +24,11 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-db_pool = None
-init_db_pool()
-db = DB()
-
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY')
 
 locales = Locales()
-
+db = DB()
 
 @app.context_processor
 def inject_kv_dict():
