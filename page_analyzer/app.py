@@ -17,7 +17,7 @@ from page_analyzer.url_tools import (
     validate_status_code,
     ParseHtml
 )
-from page_analyzer.db_processor import init_db_pool, DB
+from page_analyzer.db_processor import DB
 
 from dotenv import load_dotenv
 
@@ -29,6 +29,7 @@ app.secret_key = os.environ.get('SECRET_KEY')
 
 locales = Locales()
 db = DB()
+
 
 @app.context_processor
 def inject_kv_dict():
