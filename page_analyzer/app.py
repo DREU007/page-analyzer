@@ -93,14 +93,12 @@ def post_urls():
             messages=messages
         ), 422
 
-    existing_urls = db.get_existing_urls()
-    if normalized_url in existing_urls:
+    if db.is_url_name_in_db(normalized_url):
         flash('exist', 'info')
     else:
-        db.insert_url(normalized_url)
+        url_id = db.insert_url(normalized_url)
         flash('added', 'success')
 
-    url_id = db.get_url_id_by_name(normalized_url)
     return make_response(redirect(
         url_for('get_url_id', url_id=url_id), code=302
     ))

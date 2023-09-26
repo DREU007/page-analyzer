@@ -53,6 +53,7 @@ class DB:
                 sql_data = curr.fetchall()
                 return sql_data
 
+    # TODO: Delete?
     def get_existing_urls(self):
         with get_connection() as conn:
             with conn.cursor() as curr:
@@ -69,6 +70,13 @@ class DB:
                 url_data = curr.fetchone()
                 return url_data
 
+    def get_url_name(self, url_id):
+        with get_connection() as conn:
+            with conn.cursor() as curr:
+                curr.execute('SELECT name FROM urls WHERE id = %s', (url_id,))
+                sql_data = curr.fetchone()
+                return sql_data['name']
+
     def get_url_id_by_name(self, normalized_url):
         with get_connection() as conn:
             with conn.cursor() as curr:
@@ -78,12 +86,11 @@ class DB:
                 url_id = curr.fetchone()['id']
                 return url_id
 
-    def get_url_name(self, url_id):
-        with get_connection() as conn:
-            with conn.cursor() as curr:
-                curr.execute('SELECT name FROM urls WHERE id = %s', (url_id,))
-                sql_data = curr.fetchone()
-                return sql_data['name']
+    def is_url_name_in_db(self, normalized_url):
+        try:
+            return bool(self.get_url_id_by_name(normalized_url))
+        except TypeError:
+            return False
 
     def get_checks_data(self, url_id):
         with get_connection() as conn:
@@ -99,9 +106,11 @@ class DB:
         with get_connection() as conn:
             with conn.cursor() as curr:
                 curr.execute(
-                    'INSERT INTO urls (name, created_at) VALUES (%s, %s);',
+                    'INSERT INTO urls (name, created_at) VALUES (%s, %s)'
+                    'RETURNING id;',
                     (normalized_url, datetime.date.today().isoformat())
                 )
+                return curr.fetchone()['id']
 
     def insert_check(
             self, url_id, status_code, h1, title, description
