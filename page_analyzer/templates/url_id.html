@@ -23,7 +23,7 @@
     </table>
 
     <h1 class="pt-5">{{ kv_dict.checks }}</h1>
-    <form action="/urls/{{ url_data.id }}/checks" method="post">
+    <form action="{{ url_for('post_url_id_checks', url_id=url_data.id) }}" method="post">
       <label class="visually-hidden" for="btn-start-check">start check</label>
       <input class="btn btn-outline-info btn-dark my-2" id="btn-start-check" type="submit" value="{{ kv_dict.button['btn-start-check'] }}">
     </form>

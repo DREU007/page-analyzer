@@ -16,11 +16,11 @@
         <ul class="navbar-nav align-items-center m-auto">
   
           <li class="nav-item">
-            <a href="/" class="navbar-brand ">{{ kv_dict.title }}</a>
+	    <a href="{{ url_for('get_index') }}" class="navbar-brand ">{{ kv_dict.title }}</a>
           </li>
   
           <li class="nav-item">
-            <a href="/urls" class="nav-link">{{ kv_dict.urls }}</a>
+	    <a href="{{ url_for('get_urls') }}" class="nav-link">{{ kv_dict.urls }}</a>
           </li>
   
           <li class="nav-item dropdown">
@@ -32,8 +32,8 @@
               </a>
               
               <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="/en">{{ kv_dict.eng }}</a></li>
-                <li><a class="dropdown-item" href="/ru">{{ kv_dict.rus }}</a></li>
+		<li><a class="dropdown-item" href="{{ url_for('get_eng_index') }}">{{ kv_dict.eng }}</a></li>
+		<li><a class="dropdown-item" href="{{ url_for('get_ru_index') }}">{{ kv_dict.rus }}</a></li>
               </ul>
   
             </li>

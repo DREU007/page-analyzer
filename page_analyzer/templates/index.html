@@ -17,7 +17,7 @@
         <h1>{{ kv_dict.title }}</h1>
         <p>{{ kv_dict.description }}</p>
         
-        <form class="d-flex justify-content-center" action="/urls" method="post" required="">
+	<form class="d-flex justify-content-center" action="{{ url_for('get_urls') }}" method="post" required="">
           <label for="url" class="visually-hidden">
             url
           </label>
