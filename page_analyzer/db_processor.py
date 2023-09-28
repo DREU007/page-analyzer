@@ -38,30 +38,41 @@ def get_connection():
     finally:
         db_pool.putconn(conn)
 
+def make_generator(iterable):
+    yield from iterable
+
 
 class DB:
     def get_urls_data(self):
         with get_connection() as conn:
             with conn.cursor() as curr:
-                curr.execute("""
-                SELECT DISTINCT ON (urls.id) urls.id,
-                    urls.name, url_checks.status_code, url_checks.created_at
-                    FROM urls LEFT JOIN url_checks
-                        ON urls.id = url_checks.url_id
-                ORDER BY urls.id DESC;
-                """)
-                sql_data = curr.fetchall()
-                return sql_data
+                curr.execute(
+                    'SELECT id, name FROM urls ORDER BY id DESC;'
+                )
+                query_urls = curr.fetchall()
 
-    # TODO: Delete?
-    def get_existing_urls(self):
-        with get_connection() as conn:
-            with conn.cursor() as curr:
-                curr.execute('SELECT name FROM urls;')
-                sql_data = curr.fetchall()
-                if sql_data:
-                    return [row['name'] for row in sql_data]
-                return []
+                curr.execute(
+                    """
+                    SELECT DISTINCT ON (url_id) url_id, status_code, created_at
+                        FROM url_checks
+                        ORDER BY url_id DESC, created_at ASC;
+                    """
+                    )
+                query_checks = curr.fetchall()
+                
+                sql_data = []
+                while query_urls:
+                    while query_checks:
+                        e1 = query_urls.pop(0)
+                        e2 = query_checks[0]
+                        if e1['id'] == e2['url_id']:
+                            sql_data.append(e1 | e2)
+                            query_checks.pop(0)
+                        else:
+                           sql_data.append(e1)
+                    sql_data.extend(query_urls)
+                    
+                return sql_data
 
     def get_url_data(self, url_id):
         with get_connection() as conn:
