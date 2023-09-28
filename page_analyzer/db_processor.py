@@ -58,17 +58,19 @@ class DB:
                 query_checks = curr.fetchall()
 
                 sql_data = []
-                while query_urls:
-                    while query_checks:
-                        e1 = query_urls.pop(0)
-                        e2 = query_checks[0]
-                        if e1['id'] == e2['url_id']:
-                            sql_data.append(e1 | e2)
-                            query_checks.pop(0)
-                        else:
-                            sql_data.append(e1)
-                    sql_data.extend(query_urls)
-
+                try:
+                    while query_urls:
+                        while query_checks:
+                            e1 = query_urls.pop(0)
+                            e2 = query_checks[0]
+                            if e1['id'] == e2['url_id']:
+                                sql_data.append(e1 | e2)
+                                query_checks.pop(0)
+                            else:
+                                sql_data.append(e1)
+                        sql_data.extend(query_urls)
+                except IndexError:
+                    pass
                 return sql_data
 
     def get_url_data(self, url_id):
