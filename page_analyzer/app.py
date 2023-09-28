@@ -93,7 +93,8 @@ def post_urls():
             messages=messages
         ), 422
 
-    if db.is_url_name_in_db(normalized_url):
+    url_id = db.get_url_id_by_name_or_false(normalized_url)
+    if url_id:
         flash('exist', 'info')
     else:
         url_id = db.insert_url(normalized_url)

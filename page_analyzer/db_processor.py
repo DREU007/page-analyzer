@@ -85,7 +85,7 @@ class DB:
                 sql_data = curr.fetchone()
                 return sql_data['name']
 
-    def get_url_id_by_name(self, normalized_url):
+    def _get_url_id_by_name(self, normalized_url):
         with get_connection() as conn:
             with conn.cursor() as curr:
                 curr.execute(
@@ -94,9 +94,10 @@ class DB:
                 url_id = curr.fetchone()['id']
                 return url_id
 
-    def is_url_name_in_db(self, normalized_url):
+    def get_url_id_by_name_or_false(self, normalized_url):
+        """Return id if url_name in db, else False"""
         try:
-            return bool(self.get_url_id_by_name(normalized_url))
+            return self._get_url_id_by_name(normalized_url)
         except TypeError:
             return False
 
