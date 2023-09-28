@@ -38,9 +38,6 @@ def get_connection():
     finally:
         db_pool.putconn(conn)
 
-def make_generator(iterable):
-    yield from iterable
-
 
 class DB:
     def get_urls_data(self):
@@ -59,7 +56,7 @@ class DB:
                     """
                     )
                 query_checks = curr.fetchall()
-                
+
                 sql_data = []
                 while query_urls:
                     while query_checks:
@@ -69,9 +66,9 @@ class DB:
                             sql_data.append(e1 | e2)
                             query_checks.pop(0)
                         else:
-                           sql_data.append(e1)
+                            sql_data.append(e1)
                     sql_data.extend(query_urls)
-                    
+
                 return sql_data
 
     def get_url_data(self, url_id):
