@@ -54,7 +54,7 @@ class DB:
                         FROM url_checks
                         ORDER BY url_id DESC, created_at DESC;
                     """
-                    )
+                )
                 query_checks = curr.fetchall()
 
                 sql_data = []
