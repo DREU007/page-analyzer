@@ -52,7 +52,7 @@ class DB:
                     """
                     SELECT DISTINCT ON (url_id) url_id, status_code, created_at
                         FROM url_checks
-                        ORDER BY url_id DESC, created_at ASC;
+                        ORDER BY url_id DESC, created_at DESC;
                     """
                     )
                 query_checks = curr.fetchall()
